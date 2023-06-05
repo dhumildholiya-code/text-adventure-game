@@ -1,0 +1,65 @@
+#view {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    background-color: white;
+    justify-content: end;
+    align-items: end;
+}
+
+#input-area {
+    height: 50px;
+    margin-top: 5px;
+    background-color: white;
+}
+
+#input-area>form {
+    height: 100%;
+    margin-left: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#input-area>form>span {
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+#input-text {
+    margin-left: 10px;
+    margin-right: 10px;
+    height: 100%;
+    flex-grow: 1;
+    font-size: 1.3rem;
+}
+
+#submit {
+    width: auto;
+    height: 100%;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.dialogue {
+    margin: 5px;
+    padding: 10px;
+    max-width: 65%;
+    background-color: aquamarine;
+    border-radius: 10px;
+    overflow-wrap: break-word;
+    text-align: end;
+}
+
+.command {
+    color: blue;
+}
+
+.direction {
+    color: rebeccapurple;
+}
+
+.left {
+    align-self: flex-start;
+    text-align: start;
+}
