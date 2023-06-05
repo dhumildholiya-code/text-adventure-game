@@ -13,6 +13,10 @@
       --dark-purple: #40128B;
   }
 
+  html {
+      scroll-behavior: smooth;
+  }
+
   body {
       margin: 0;
       padding: 0;
@@ -24,7 +28,7 @@
       justify-content: center;
       background-color: var(--dark-purple);
       font-family: 'Poppins', sans-serif;
-      font-size: 14px;
+      font-size: 15px;
   }
 
   .game-view {

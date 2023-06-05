@@ -7,9 +7,10 @@ function onSumbit(e) {
         return;
     }
     const dialogue = createDialogue(command, false);
-    viewElement.appendChild(dialogue);
+    viewContentElement.appendChild(dialogue);
     inputTextElement.value = "";
     processCommnad(command);
+    viewContentElement.scrollTop = viewContentElement.scrollHeight;
 }
 
 function processCommnad(command) {
@@ -19,6 +20,9 @@ function processCommnad(command) {
         case "go":
             navigate(keywords[1]);
             break;
+        case "choose":
+            choose(parseInt(keywords[1]) - 1);
+            break;
 
         default:
             createDialogue("Sorry! can't recognize command.", true);
@@ -26,6 +30,20 @@ function processCommnad(command) {
     }
 }
 
+function choose(choiceId) {
+    if (Number.isInteger(choiceId)) {
+        if (validateChoiceIndex(choiceId)) {
+            const nextRoomKey = getChoiceNextRoom(choiceId);
+            changeRoom(nextRoomKey);
+        }
+        else {
+            createDialogue(`Choice ${choiceId} doesn't exist.`, true);
+        }
+    }
+    else {
+        createDialogue("Choice is not a valid integer!", true);
+    }
+}
 function navigate(direction) {
     if (hasExitKeyInRoom(current_room, direction)) {
         changeRoom(getExitNextRoom(current_room, direction));
@@ -35,4 +53,5 @@ function navigate(direction) {
     }
 }
 
-createDialogue(getRoomDescription(current_room), true);
+createDialogue(getHtmlRoomDescription(current_room), true);
+inputTextElement.focus();

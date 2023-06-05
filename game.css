@@ -1,10 +1,20 @@
 #view {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
+    flex: 1;
+    height: 100px;
     background-color: var(--dark-purple);
     justify-content: end;
+}
+
+#view-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow-y: auto;
+    scroll-behavior: smooth;
     align-items: end;
+    min-height: 0px;
 }
 
 #input-area {
@@ -17,9 +27,8 @@
 
 #input-area>form {
     height: 100%;
-    margin-left: 10px;
-    margin-right: 10px;
     padding: 5px 20px;
+    margin: 0px 5px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -84,11 +93,16 @@
 }
 
 .command {
-    color: darkblue;
+    color: var(--dark-pink);
+}
+
+.options {
+    margin: 0px;
+    color: cadetblue;
 }
 
 .direction {
-    color: darkorchid;
+    color: var(--dark-purple);
 }
 
 .left {
