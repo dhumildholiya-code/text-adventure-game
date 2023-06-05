@@ -1,7 +1,8 @@
 const viewContentElement = document.getElementById('view-content');
+const viewElement = document.getElementById('view');
 const inputTextElement = document.getElementById('input-text');
 const formElement = document.querySelector("#input-area > form");
-let current_room = "forest_entrance";
+let current_room = "introduction_1";
 
 function createDialogue(text, compGenerated = true) {
     const dialougElement = document.createElement('div');
@@ -94,6 +95,7 @@ function hasExitKeyInRoom(roomKey, exitKey) {
 }
 function changeRoom(newRoomKey) {
     current_room = newRoomKey;
+    viewElement.style.backgroundImage = `url(${rooms[current_room]['image']})`;
     createDialogue(getHtmlRoomDescription(current_room));
 }
 
