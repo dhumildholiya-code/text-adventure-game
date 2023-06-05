@@ -3,6 +3,9 @@ formElement.addEventListener("submit", onSumbit);
 function onSumbit(e) {
     e.preventDefault();
     const command = inputTextElement.value;
+    if (command == "") {
+        return;
+    }
     const dialogue = createDialogue(command, false);
     viewElement.appendChild(dialogue);
     inputTextElement.value = "";
