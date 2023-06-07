@@ -1,5 +1,5 @@
 const verbs = ["go", "pick", "attack"];
-const preposition = ["to","in","from","up","with"];
+const preposition = ["to","in","from","up","with","on"];
 const directions = ["north", "south", "east", "west"];
 const word = ["box", "wooden", "stick", "bag", "stone", "troll", "iron", "sword"];
 const clean = ["a", "an", "the"];
@@ -32,16 +32,22 @@ function TerminalNode(type, value){
 }
 
 function parseNext(tokens, prev){
-    let tok = tokens.shift();
+    let tok = tokens[0];
     if(tok.tokenType == "EOF"){
         return prev;
     }
-    if(prev == null && tok.tokenType == "verb"){
+    if(prev == null && (tok.tokenType == "verb" || tok.tokenType == "word")){
+        tokens.shift();
         return parseNext(tokens, new TerminalNode(tok.tokenType, tok.literal));
     }
     else if(prev.type == "verb" && (tok.tokenType == "direction" || tok.tokenType == "word")){
-        let right = new TerminalNode(tok.tokenType, tok.literal);
+        let right = parseNext(tokens, null);
         return new Node("join", "", prev, right);
+    }
+    else if(tok.tokenType == "preposition"){
+        tokens.shift();
+        let right = parseNext(tokens, null);
+        return new Node(tok.tokenType, tok.literal, prev, right);
     }
     else{
         return prev;
@@ -57,9 +63,9 @@ function parseCommand(source){
         const tokens = tokensObj.tokens;
         const sentence = parseNext(tokens, null);
         console.log(sentence);
-        for (const token of tokens) {
-            console.log(token);
-        }
+        // for (const token of tokens) {
+        //     console.log(token);
+        // }
     }
     else{
         console.log(`[ERROR] : ${tokensObj.err}`);
@@ -103,4 +109,4 @@ function tokenizer(source){
 }
 
 // parseCommand("attack troll with he iron sword");
-parseCommand("attack troll with sword");
+parseCommand("attack on a troll with the sword");
