@@ -27,7 +27,26 @@ function Node(type, value, left, right){
     this.left = left;
     this.right = right;
 }
+function TerminalNode(type, value){
+    return new Node(type, value , null, null);
+}
 
+function parseNext(tokens, prev){
+    let tok = tokens.shift();
+    if(tok.tokenType == "EOF"){
+        return prev;
+    }
+    if(prev == null && tok.tokenType == "verb"){
+        return parseNext(tokens, new TerminalNode(tok.tokenType, tok.literal));
+    }
+    else if(prev.type == "verb" && (tok.tokenType == "direction" || tok.tokenType == "word")){
+        let right = new TerminalNode(tok.tokenType, tok.literal);
+        return new Node("join", "", prev, right);
+    }
+    else{
+        return prev;
+    }
+}
 /**
  * parse user input into a form which game can understand.
  * @param {String} source user input
@@ -36,7 +55,8 @@ function parseCommand(source){
     const tokensObj = tokenizer(source);
     if(tokensObj.err == ""){
         const tokens = tokensObj.tokens;
-        const sentence = {};
+        const sentence = parseNext(tokens, null);
+        console.log(sentence);
         for (const token of tokens) {
             console.log(token);
         }
@@ -83,4 +103,4 @@ function tokenizer(source){
 }
 
 // parseCommand("attack troll with he iron sword");
-parseCommand("go to north");
+parseCommand("attack troll with sword");
