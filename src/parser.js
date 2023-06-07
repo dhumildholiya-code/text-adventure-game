@@ -2,6 +2,7 @@ const verbs = ["go", "pick", "attack"];
 const preposition = ["to","in","from","up","with","on"];
 const directions = ["north", "south", "east", "west"];
 const word = ["box", "wooden", "stick", "bag", "stone", "troll", "iron", "sword"];
+const gameObjects = ["iron sword", "wooden stick"];
 const clean = ["a", "an", "the"];
 const tokenPatterns = [
     {type: "verb", pattern: verbs},
@@ -61,11 +62,11 @@ function parseCommand(source){
     const tokensObj = tokenizer(source);
     if(tokensObj.err == ""){
         const tokens = tokensObj.tokens;
-        const sentence = parseNext(tokens, null);
-        console.log(sentence);
-        // for (const token of tokens) {
-        //     console.log(token);
-        // }
+        // const sentence = parseNext(tokens, null);
+        // console.log(sentence);
+        tokens.forEach(element => {
+            console.log(element);
+        });
     }
     else{
         console.log(`[ERROR] : ${tokensObj.err}`);
@@ -79,6 +80,7 @@ function tokenizer(source){
     source = source.toLowerCase();
     sourceWords = source.split(" ");
     const tokens = [];
+    const newTokens=[];
     let err = "";
     for (let i = 0; i < sourceWords.length; i++) {
         const word = sourceWords[i];
@@ -98,15 +100,31 @@ function tokenizer(source){
         }
         if(counter != 0){
             err = `Unexpected token ${word}`;
-            break;
+            return({
+                tokens: [],
+                err: err,
+            });
         }
     }
-    tokens.push(new Token("EOF", null));
+    let combineWord = "";
+    for(let i=0;i<tokens.length - 1;i++){
+        if(tokens[i].tokenType == "word" && tokens[i+1].tokenType =="word"){
+            combineWord = `${tokens[i].literal} ${tokens[i+1].literal}`;
+            if(gameObjects.includes(combineWord)){
+                newTokens.push(new Token("word", combineWord));
+            }
+        }
+        else{
+            newTokens.push(tokens[i]);
+            combineWord = "";
+        }
+    }
+    newTokens.push(new Token("EOF", null));
     return ({
-        tokens: tokens,
+        tokens: newTokens,
         err: err,
     });
 }
 
 // parseCommand("attack troll with he iron sword");
-parseCommand("attack on a troll with the sword");
+parseCommand("attack on a troll with the iron sword");
