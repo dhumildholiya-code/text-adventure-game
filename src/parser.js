@@ -1,7 +1,8 @@
-const verbs = {"go":0, "pick":1, "attack":2};
+const verbs = {"go":0, "pick":1, "choose":2};
 const preposition = {"to":0,"in":1,"from":2,"up":3,"with":4,"on":5};
 const directions = {"north":0, "south":1, "east":2, "west":3};
 const word = {"box":0, "wooden":1, "stick":2, "bag":3, "stone":4, "troll":5, "iron":6, "sword":7};
+const number = {"0":0, "1":1, "2":2, "3":3, "4":4};
 const gameObjects = {"iron sword":0, "wooden stick":1, "wooden troll":2};
 const objs = "verb word direction";
 const clean = {"a":0, "an":1, "the":2};
@@ -10,8 +11,17 @@ const tokenPatterns = [
     {type: "preposition", pattern: preposition},
     {type:"direction", pattern: directions},
     {type:"word", pattern: word},
+    {type:"number", pattern: number},
     {type:"null", pattern: clean},
 ];
+let commandResult = new CommandResult();
+function CommandResult(){
+    this.code = "";
+    this.args = [];
+}
+function clearCommandResult(){
+    commandResult = new CommandResult();
+}
 function Token(tokenType, literal, value){
     this.tokenType = tokenType;
     this.literal = literal;
@@ -21,26 +31,30 @@ function Token(tokenType, literal, value){
  * Represents Node of AST(Abstract Syntax Tree) 
  * @param {String} type type of node
  * @param {Number} value value of node
+ * @param {String} literal contains string value of token. 
  * @param {Node} left left child of node
  * @param {Node} right right child of node
  */
-function Node(type, value, left, right){
+function Node(type, value,literal, left, right){
     this.type = type;
     this.value = value;
+    this.literal = literal,
     this.left = left;
     this.right = right;
 }
-function TerminalNode(type, value){
-    return new Node(type, value , null, null);
+function TerminalNode(type, value, literal){
+    return new Node(type, value, literal, null, null);
 }
-let result = "";
 function evaluate(node){
     if(node == null){
         return;
     }
     evaluate(node.left);
-    if(objs.includes(node.type)){
-        result += `${node.value}`;
+    if(objs.includes(node.type) || node.type == "number"){
+        commandResult.code += `${node.value}`;
+    }
+    if(node.type == "word" || node.type == "direction" || node.type == "number"){
+        commandResult.args.push(node.literal);
     }
     evaluate(node.right);
 }
@@ -51,16 +65,20 @@ function parseNext(tokens, prev){
     }
     if(prev == null && objs.includes(tok.tokenType)){
         tokens.shift();
-        return parseNext(tokens, new TerminalNode(tok.tokenType, tok.value));
+        return parseNext(tokens, new TerminalNode(tok.tokenType,tok.value, tok.literal));
     }
-    else if(prev.type == "verb" && (tok.tokenType == "direction" || tok.tokenType == "word")){
+    else if(prev == null && tok.tokenType == "number"){
+        tokens.shift();
+        return parseNext(tokens, new Node("join", 0, "", new TerminalNode("verb", 2, "choose"), new TerminalNode(tok.tokenType, tok.value, tok.literal)));
+    }
+    else if(prev.type == "verb" && (tok.tokenType == "direction" || tok.tokenType == "word" || tok.tokenType == "number")){
         let right = parseNext(tokens, null);
-        return new Node("join", 0, prev, right);
+        return new Node("join", 0, "", prev, right);
     }
     else if(tok.tokenType == "preposition"){
         tokens.shift();
         let right = parseNext(tokens, null);
-        return new Node(tok.tokenType, tok.value, prev, right);
+        return new Node(tok.tokenType,tok.value, tok.literal, prev, right);
     }
     else{
         return prev;
@@ -75,9 +93,9 @@ function parseCommand(source){
     let err = "";
     if(tokensObj.tokens != null){
         const tokens = tokensObj.tokens;
-        // tokens.forEach(element => {
-        //     console.log(element);
-        // });
+        tokens.forEach(element => {
+            console.log(element);
+        });
         const sentence = parseNext(tokens, null);
         // console.log(sentence);
         return({

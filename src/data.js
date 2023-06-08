@@ -1,5 +1,5 @@
 
-const commandRegx = /\b(go|look}choose|take|inspect|drop|use|inventory)/gi;
+const commandRegx = /\b(go|look|choose|take|inspect|drop|use|inventory)/gi;
 const directionRegx = /\b(north|south|east|west)/gi;
 const keywordsRegx = /\b(Enchanted Amulet|Eldoria|Malachi|Forest of Whispers)/gi;
 const itemRegx = /\b(wooden-stick)/gi;

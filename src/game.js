@@ -1,4 +1,9 @@
-const jumpTable = {}
+const jumpTable = {
+    21:()=>{choose(0);},
+    22:()=>{choose(1);},
+    23:()=>{choose(2);},
+    24:()=>{choose(3);},
+};
 formElement.addEventListener("submit", onSumbit);
 
 function onSumbit(e) {
@@ -20,8 +25,13 @@ function processCommnad(command) {
         let sentence = sentenceObj.sentence;
         console.log(sentence);
         evaluate(sentence);
-        console.log(result);
-        result = "";
+
+        const jumpKey = parseInt(commandResult.code);
+        if(jumpKey in jumpTable){
+            jumpTable[jumpKey]();
+        }
+        console.log(commandResult);
+        clearCommandResult();
     }
     else{
         createDialogue(sentenceObj.err);
