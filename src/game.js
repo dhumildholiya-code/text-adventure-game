@@ -1,3 +1,4 @@
+const jumpTable = {}
 formElement.addEventListener("submit", onSumbit);
 
 function onSumbit(e) {
@@ -15,10 +16,12 @@ function onSumbit(e) {
 
 function processCommnad(command) {
     let sentenceObj = parseCommand(command);
-    console.log(sentenceObj);
     if(sentenceObj.sentence != null){
         let sentence = sentenceObj.sentence;
         console.log(sentence);
+        evaluate(sentence);
+        console.log(result);
+        result = "";
     }
     else{
         createDialogue(sentenceObj.err);

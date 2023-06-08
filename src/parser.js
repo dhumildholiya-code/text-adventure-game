@@ -3,6 +3,7 @@ const preposition = {"to":0,"in":1,"from":2,"up":3,"with":4,"on":5};
 const directions = {"north":0, "south":1, "east":2, "west":3};
 const word = {"box":0, "wooden":1, "stick":2, "bag":3, "stone":4, "troll":5, "iron":6, "sword":7};
 const gameObjects = {"iron sword":0, "wooden stick":1, "wooden troll":2};
+const objs = "verb word direction";
 const clean = {"a":0, "an":1, "the":2};
 const tokenPatterns = [
     {type: "verb", pattern: verbs},
@@ -32,13 +33,23 @@ function Node(type, value, left, right){
 function TerminalNode(type, value){
     return new Node(type, value , null, null);
 }
-
+let result = "";
+function evaluate(node){
+    if(node == null){
+        return;
+    }
+    evaluate(node.left);
+    if(objs.includes(node.type)){
+        result += `${node.value}`;
+    }
+    evaluate(node.right);
+}
 function parseNext(tokens, prev){
     let tok = tokens[0];
     if(tok.tokenType == "EOF"){
         return prev;
     }
-    if(prev == null && (tok.tokenType == "verb" || tok.tokenType == "word" || tok.tokenType == "direction")){
+    if(prev == null && objs.includes(tok.tokenType)){
         tokens.shift();
         return parseNext(tokens, new TerminalNode(tok.tokenType, tok.value));
     }
