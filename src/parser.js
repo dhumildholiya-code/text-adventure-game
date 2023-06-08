@@ -38,7 +38,7 @@ function parseNext(tokens, prev){
     if(tok.tokenType == "EOF"){
         return prev;
     }
-    if(prev == null && (tok.tokenType == "verb" || tok.tokenType == "word")){
+    if(prev == null && (tok.tokenType == "verb" || tok.tokenType == "word" || tok.tokenType == "direction")){
         tokens.shift();
         return parseNext(tokens, new TerminalNode(tok.tokenType, tok.value));
     }
@@ -61,16 +61,25 @@ function parseNext(tokens, prev){
  */
 function parseCommand(source){
     const tokensObj = tokenizer(source);
-    if(tokensObj.err == ""){
+    let err = "";
+    if(tokensObj.tokens != null){
         const tokens = tokensObj.tokens;
+        // tokens.forEach(element => {
+        //     console.log(element);
+        // });
         const sentence = parseNext(tokens, null);
-        console.log(sentence);
-        tokens.forEach(element => {
-            console.log(element);
+        // console.log(sentence);
+        return({
+            sentence: sentence,
+            err: err,
         });
     }
     else{
-        console.log(`[ERROR] : ${tokensObj.err}`);
+        err = `[ERROR] : ${tokensObj.err}`;
+        return({
+            sentence: null,
+            err: err,
+        });
     }
 }
 /**
@@ -103,26 +112,32 @@ function tokenizer(source){
         if(counter != 0){
             err = `Unexpected token ${word}`;
             return({
-                tokens: [],
+                tokens: null,
                 err: err,
             });
         }
     }
+    tokens.push(new Token("EOF", null, 0));
     let combineWord = "";
     let goKeys = Object.keys(gameObjects);
-    for(let i=0;i<tokens.length - 1;i++){
-        if(tokens[i].tokenType == "word" && tokens[i+1].tokenType =="word"){
-            combineWord = `${tokens[i].literal} ${tokens[i+1].literal}`;
+    let cur = tokens.shift();
+    while(cur.tokenType != "EOF"){
+        let next = tokens[0];
+        if(cur.tokenType == "word" && next.tokenType == "word"){
+            combineWord = `${cur.literal} ${next.literal}`;
             if(goKeys.includes(combineWord)){
-                newTokens.push(new Token("word", combineWord, gameObjects[combineWord]));
+                newTokens.push(new Token(cur.tokenType,combineWord, gameObjects[combineWord]));
+                cur = tokens.shift();
+                cur = tokens.shift();
+            }
+            else{
+                newTokens.push(cur);
+                cur = tokens.shift();
             }
         }
-        else if(tokens[i].tokenType == "word" && tokens[i+1].tokenType !="word"){
-            continue;
-        }
         else{
-            newTokens.push(tokens[i]);
-            combineWord = "";
+            newTokens.push(cur);
+            cur = tokens.shift();
         }
     }
     newTokens.push(new Token("EOF", null, 0));
@@ -133,4 +148,4 @@ function tokenizer(source){
 }
 
 // parseCommand("attack troll with he iron sword");
-parseCommand("attack on a wooden troll with the iron sword");
+// parseCommand("attack on a wooden troll with the iron sword");

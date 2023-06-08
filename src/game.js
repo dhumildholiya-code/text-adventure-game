@@ -14,32 +14,41 @@ function onSumbit(e) {
 }
 
 function processCommnad(command) {
-    command = command.toLowerCase();
-    const keywords = command.trim().split(" ");
-    switch (keywords[0]) {
-        case "go":
-            navigate(keywords[1]);
-            break;
-        case "look":
-            look();
-            break;
-        case "choose":
-            choose(parseInt(keywords[1]) - 1);
-            break;
-        case "take":
-            takeItem(keywords[1]);
-            break;
-        case "inspect":
-            inspectItem(keywords[1]);
-            break;
-        case "inventory":
-            showInventory();
-            break;
-
-        default:
-            createDialogue("Sorry! can't recognize command.");
-            break;
+    let sentenceObj = parseCommand(command);
+    console.log(sentenceObj);
+    if(sentenceObj.sentence != null){
+        let sentence = sentenceObj.sentence;
+        console.log(sentence);
     }
+    else{
+        createDialogue(sentenceObj.err);
+    }
+    // command = command.toLowerCase();
+    // const keywords = command.trim().split(" ");
+    // switch (keywords[0]) {
+    //     case "go":
+    //         navigate(keywords[1]);
+    //         break;
+    //     case "look":
+    //         look();
+    //         break;
+    //     case "choose":
+    //         choose(parseInt(keywords[1]) - 1);
+    //         break;
+    //     case "take":
+    //         takeItem(keywords[1]);
+    //         break;
+    //     case "inspect":
+    //         inspectItem(keywords[1]);
+    //         break;
+    //     case "inventory":
+    //         showInventory();
+    //         break;
+
+    //     default:
+    //         createDialogue("Sorry! can't recognize command.");
+    //         break;
+    // }
 }
 
 function showInventory() {
