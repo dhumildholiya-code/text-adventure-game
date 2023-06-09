@@ -50,7 +50,7 @@ function evaluate(node){
         return;
     }
     evaluate(node.left);
-    if(objs.includes(node.type) || node.type == "number"){
+    if(objs.includes(node.type)){
         commandResult.code += `${node.value}`;
     }
     if(node.type == "word" || node.type == "direction" || node.type == "number"){
@@ -67,7 +67,7 @@ function parseNext(tokens, prev){
         tokens.shift();
         return parseNext(tokens, new TerminalNode(tok.tokenType,tok.value, tok.literal));
     }
-    else if(prev.type == "verb" && (tok.tokenType == "direction" || tok.tokenType == "word" || tok.tokenType == "number")){
+    else if(prev.type == "verb" && objs.includes(tok.tokenType)){
         let right = parseNext(tokens, null);
         return new Node("join", 0, "", prev, right);
     }
