@@ -89,9 +89,9 @@ function parseCommand(source){
     let err = "";
     if(tokensObj.tokens != null){
         const tokens = tokensObj.tokens;
-        tokens.forEach(element => {
-            console.log(element);
-        });
+        // tokens.forEach(element => {
+        //     console.log(element);
+        // });
         const sentence = parseNext(tokens, null);
         // console.log(sentence);
         return({
