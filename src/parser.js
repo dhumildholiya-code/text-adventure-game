@@ -1,10 +1,10 @@
-const verbs = {"go":0, "pick":1, "choose":2};
+const verbs = {"go":0, "pick":1, "choose":2, "attack": 3};
 const preposition = {"to":0,"in":1,"from":2,"up":3,"with":4,"on":5};
 const directions = {"north":0, "south":1, "east":2, "west":3};
 const word = {"box":0, "wooden":1, "stick":2, "bag":3, "stone":4, "troll":5, "iron":6, "sword":7};
 const number = {"0":0, "1":1, "2":2, "3":3, "4":4};
 const gameObjects = {"iron sword":0, "wooden stick":1, "wooden troll":2};
-const objs = "verb word direction";
+const objs = "verb word direction number";
 const clean = {"a":0, "an":1, "the":2};
 const tokenPatterns = [
     {type: "verb", pattern: verbs},
@@ -66,10 +66,6 @@ function parseNext(tokens, prev){
     if(prev == null && objs.includes(tok.tokenType)){
         tokens.shift();
         return parseNext(tokens, new TerminalNode(tok.tokenType,tok.value, tok.literal));
-    }
-    else if(prev == null && tok.tokenType == "number"){
-        tokens.shift();
-        return parseNext(tokens, new Node("join", 0, "", new TerminalNode("verb", 2, "choose"), new TerminalNode(tok.tokenType, tok.value, tok.literal)));
     }
     else if(prev.type == "verb" && (tok.tokenType == "direction" || tok.tokenType == "word" || tok.tokenType == "number")){
         let right = parseNext(tokens, null);
